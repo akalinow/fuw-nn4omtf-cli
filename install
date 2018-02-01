@@ -1,0 +1,30 @@
+#!/bin/bash
+#
+# Jacek Lysiak <jacek.lysiako.o.at.gmail.com>
+#
+# Easy installation script.
+# Copy tools into hidden dir @ your home.
+#
+#===================================
+
+old=$PWD
+
+dir=".nn4omtf_cli"
+cd ~
+mkdir -p $dir
+cd $dir
+echo "Copying tool files:"
+cp -v $old/*tool .
+exp='PATH=$PATH:'${PWD}
+if [ -z $(cat ~/.bashrc | grep "${PWD}") ]; then
+  echo "Exporting PATH: $PWD$"
+  echo $exp >> ~/.bashrc
+  echo "export PATH" >> ~/.bashrc
+else
+  echo "$PWD path exported already!"
+fi
+
+echo "Done!"
+
+cd $old
+
