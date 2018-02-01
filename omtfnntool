@@ -1,23 +1,65 @@
 #!/usr/bin/env python3.6
-# -*- coding: utf-8 -*-
-# 
-# author: Jacek Łysiak <jacek.lysiako.o.at.gmail.com>
-#
-# Command line client for OMTFNN object.
-#
-# =================================================
+# -*- coding: utf-8 -*- 
 
 import sys
 import platform
 import argparse
 
 
-if __name__ == "__main__":
-#    print("HELLO")
-#    print(sys.version)
-#    print(platform.python_version())
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("echo")
-    args = parser.parse_args()
-    print(args.echo)
+desc="""
+Command line tools for nn4omtf.
+This script handles a few basic (and most frequent) operations
+on networks and storages like displaying summaries, creating,
+deleting, moving.
+"""
+
+def is_omtfnnstorage_path_valid(path):
+    return False
+
+def is_omtfnn_path_valid(path):
+    return False
+
+def show_summary(dir):
+    if is_omtfnn_path_valid(dir): 
+        #show_omtfnn_summary()
+        pass
+    elif is_omtfnnstorage_path_valid(dir):
+        #show_omtfnnstorage_summary()
+        pass
+    else:
+        print("Sorry! No OMTFNN nor OMTFNNStorage object in '%s'" % dir)
+
+
+
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=desc)
+    subparsers = parser.add_subparsers(title="Actions", description="Actions to perform", dest="action")
+
+    show = subparsers.add_parser("show", help="Look up for network or storage and show summary.")
+    show.add_argument("dir", nargs="?", default=".", help="Network/Storage directory")
+
+    create_network = subparsers.add_parser("network", help="Create new network.")
+    create_network.add_argument("name", help="Network name")
+    create_network.add_argument("desc", help="Description Python file")
+    create_network.add_argument("dest", help="Destination directory or storage directory")
+    
+    create_network = subparsers.add_parser("storage", help="Create new storage.")
+    create_network.add_argument("name", help="Storage name")
+    create_network.add_argument("dest", help="Destination directory")
+    
+    move = subparsers.add_parser("move", help="Move network or storage.")
+    create_network.add_argument("src", help="Source path")
+    create_network.add_argument("dest", help="Destination path")
+    
+    delete = subparsers.add_parser("delete", help="Delete network or storage.")
+    create_network.add_argument("path", help="Storage or network path")
+    
+    FLAGS, unparsed = parser.parse_known_args()
+    
+    if FLAGS.action is None:
+        parser.print_help()
+    else:
+        take_action(FLAGS.action)
