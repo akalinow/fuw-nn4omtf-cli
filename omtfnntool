@@ -5,6 +5,7 @@ import sys
 import platform
 import argparse
 
+from nn4omtf.network import OMTFNN, OMTFNNStorage
 
 
 desc="""
@@ -14,24 +15,50 @@ on networks and storages like displaying summaries, creating,
 deleting, moving.
 """
 
-def is_omtfnnstorage_path_valid(path):
-    return False
+class ACTION:
+    SHOW = "show"
+    NETWORK = "network"
+    STORAGE = "storage"
+    MOVE = "move"
+    DELETE = "delete"
 
-def is_omtfnn_path_valid(path):
-    return False
 
-def show_summary(dir):
-    if is_omtfnn_path_valid(dir): 
-        #show_omtfnn_summary()
-        pass
-    elif is_omtfnnstorage_path_valid(dir):
-        #show_omtfnnstorage_summary()
-        pass
+def show_summary(path):
+    if OMTFNN.is_valid_path(path):
+        OMTFNN.show_summary(path)
+    elif OMTFNNStorage.is_valid_path(path):
+        OMTFNNStorage.show_summary(path)
     else:
         print("Sorry! No OMTFNN nor OMTFNNStorage object in '%s'" % dir)
 
 
+def create_network(name, path, builder_file):
+    net = OMTFNN.create_with_builder_file(name=name, path=path, builder_file=builder_file)
 
+
+def create_storage(name, path):
+    store = OMTFNNStorage(name, path)
+
+
+def move(src, dest):
+    pass
+
+
+def delete(path):
+    pass
+
+
+def take_action(action, FLAGS):
+    if action == ACTION.SHOW:
+        show_summary(FLAGS.dir)
+    elif action == ACTION.NETWORK:
+        create_network(FLAGS.name, FLAGS.dest, FLAGS.desc)
+    elif action == ACTION.STORAGE:
+        create_storage(FLAGS.name, FLAGS.dest)
+    elif action == ACTION.MOVE:
+        move(FLAGS.src, FLAGS.dest)
+    elif action == ACTION.DELETE:
+        delete(FLAGS.path)
 
 
 if __name__ == "__main__":
@@ -41,25 +68,25 @@ if __name__ == "__main__":
     show = subparsers.add_parser("show", help="Look up for network or storage and show summary.")
     show.add_argument("dir", nargs="?", default=".", help="Network/Storage directory")
 
-    create_network = subparsers.add_parser("network", help="Create new network.")
-    create_network.add_argument("name", help="Network name")
-    create_network.add_argument("desc", help="Description Python file")
-    create_network.add_argument("dest", help="Destination directory or storage directory")
+    network = subparsers.add_parser("network", help="Create new network.")
+    network.add_argument("name", help="Network name")
+    network.add_argument("desc", help="Description Python file")
+    network.add_argument("dest", help="Destination directory or storage directory")
     
-    create_network = subparsers.add_parser("storage", help="Create new storage.")
-    create_network.add_argument("name", help="Storage name")
-    create_network.add_argument("dest", help="Destination directory")
+    storage= subparsers.add_parser("storage", help="Create new storage.")
+    storage.add_argument("name", help="Storage name")
+    storage.add_argument("dest", help="Destination directory")
     
-    move = subparsers.add_parser("move", help="Move network or storage.")
-    create_network.add_argument("src", help="Source path")
-    create_network.add_argument("dest", help="Destination path")
+    move = subparsers.add_parser("move", help="Move network to/from storage.")
+    move.add_argument("src", help="Source path")
+    move.add_argument("dest", help="Destination path")
     
     delete = subparsers.add_parser("delete", help="Delete network or storage.")
-    create_network.add_argument("path", help="Storage or network path")
+    delete.add_argument("path", help="Storage or network path")
     
     FLAGS, unparsed = parser.parse_known_args()
     
     if FLAGS.action is None:
         parser.print_help()
     else:
-        take_action(FLAGS.action)
+        take_action(FLAGS.action, FLAGS)
