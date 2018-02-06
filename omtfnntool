@@ -65,23 +65,23 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=desc)
     subparsers = parser.add_subparsers(title="Actions", description="Actions to perform", dest="action")
 
-    show = subparsers.add_parser("show", help="Look up for network or storage and show summary.")
+    show = subparsers.add_parser(ACTION.SHOW, help="Look up for network or storage and show summary.")
     show.add_argument("dir", nargs="?", default=".", help="Network/Storage directory")
 
-    network = subparsers.add_parser("network", help="Create new network.")
+    network = subparsers.add_parser(ACTION.NETWORK, help="Create new network.")
     network.add_argument("name", help="Network name")
     network.add_argument("desc", help="Description Python file")
     network.add_argument("dest", help="Destination directory or storage directory")
     
-    storage= subparsers.add_parser("storage", help="Create new storage.")
+    storage= subparsers.add_parser(ACTION.STORAGE, help="Create new storage.")
     storage.add_argument("name", help="Storage name")
     storage.add_argument("dest", help="Destination directory")
     
-    move = subparsers.add_parser("move", help="Move network to/from storage.")
+    move = subparsers.add_parser(ACTION.MOVE, help="Move network to/from storage.")
     move.add_argument("src", help="Source path")
     move.add_argument("dest", help="Destination path")
     
-    delete = subparsers.add_parser("delete", help="Delete network or storage.")
+    delete = subparsers.add_parser(ACTION.DELETE, help="Delete network or storage.")
     delete.add_argument("path", help="Storage or network path")
     
     FLAGS, unparsed = parser.parse_known_args()

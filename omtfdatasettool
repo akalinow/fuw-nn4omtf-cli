@@ -1,0 +1,67 @@
+#!/usr/bin/env python3.6
+# -*- coding: utf-8 -*- 
+
+import sys
+import platform
+import argparse
+
+#from nn4omtf.network import OMTFNN, OMTFNNStorage
+
+
+desc="""
+Command line tools for nn4omtf.
+This script handles operations on datasets.
+"""
+
+
+class ACTION:
+    ROOT2NUMPY = "root2np"
+    CREATE = "create"
+    SHOW = "show"
+
+
+def show_summary(path):
+    pass
+
+
+def create_dataset(name, flist, dest):
+    pass
+    
+
+def convert(flist, dest):
+    print(flist)
+    print(dest)
+    pass
+
+
+def take_action(action, FLAGS):
+    if action == ACTION.SHOW:
+        show_summary(FLAGS.dir)
+    elif action == ACTION.CREATE:
+        create_dataset(FLAGS.name, FLAGS.file, FLAGS.dest)
+    elif action == ACTION.ROOT2NUMPY:
+        convert(FLAGS.data, FLAGS.dest)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=desc)
+    subparsers = parser.add_subparsers(title="Actions", description="Actions to perform", dest="action")
+
+    show = subparsers.add_parser(ACTION.SHOW, help="Look up for dataset object and show summary.")
+    show.add_argument("dir", nargs="?", default=".", help="Dataset object directory")
+
+    create = subparsers.add_parser(ACTION.CREATE, help="Create new dataset from *.npz files.")
+    create.add_argument("name", help="Dataset name")
+    create.add_argument("dest", help="Destination path")
+    create.add_argument("file", nargs="+", help="*.npz files which should be taken to dataset")
+    
+    r2n = subparsers.add_parser(ACTION.ROOT2NUMPY, help="Convert ROOT datasets to Numpy arrays.")
+    r2n.add_argument("dest", help="Destination directory")
+    r2n.add_argument("data", nargs="+", help="Source directories with ROOT datasets.")
+    
+    FLAGS, unparsed = parser.parse_known_args()
+    
+    if FLAGS.action is None:
+        parser.print_help()
+    else:
+        take_action(FLAGS.action, FLAGS)
