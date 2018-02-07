@@ -46,6 +46,9 @@ def convert(flist, dest, verbose):
     time_last = time_start
     if verbose:
         print("Starting conversion of {} files".format(total))
+        for f in flist:
+            print("> " + f)
+
     for f in flist:
         if verbose:
             print("Converting {} of {}: {}".format(cnt, total, f))
@@ -60,8 +63,8 @@ def convert(flist, dest, verbose):
         nn4omtf.utils.save_dict_as_npz(path, **x)
         now = time.time()
         if verbose:
-            print("Done in {}sec.".format(now-time_last))
-            print("Elapsed from start: {}' {}''".format((now - time_start) // 60, int(now - time_start) % 60))
+            print("Done in %.2f sec." % (now-time_last))
+            print("Elapsed from start: {}' {}''".format(int((now - time_start) // 60), int(now - time_start) % 60))
         cnt += 1
     if verbose:
         print("Conversion finished!")
