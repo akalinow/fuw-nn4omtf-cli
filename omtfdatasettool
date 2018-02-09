@@ -20,19 +20,22 @@ class ACTION:
     ROOT2NUMPY = "root2np"
     CREATE = "create"
     SHOW = "show"
+    ADD = "add"
 
 
 def show_summary(path):
     dataset = OMTFDataset.load(path)
-    dataset.show_summary()
+    print(dataset)
 
 
 def create_dataset(**kw):
     del kw['action']
     files = kw['file']
     del kw['file']
+    v = kw['v']
+    del kw['v']
     dataset = OMTFDataset(**kw)
-    dataset.add_npz_to_dataset(files)
+    dataset.add_npz_to_dataset(files, v)
     dataset.save()
     
 
@@ -77,6 +80,12 @@ def convert(flist, dest, verbose):
         print("Conversion finished!")
 
 
+def add_files(path, files, v):
+    dataset = OMTFDataset.load(path)
+    dataset.add_npz_to_dataset(files, v)
+    dataset.save()
+
+
 def take_action(action, FLAGS):
     if action == ACTION.SHOW:
         show_summary(FLAGS.dir)
@@ -84,6 +93,8 @@ def take_action(action, FLAGS):
         create_dataset(**dict(FLAGS._get_kwargs()))
     elif action == ACTION.ROOT2NUMPY:
         convert(FLAGS.data, FLAGS.dest, FLAGS.verbose)
+    elif action == ACTION.ADD:
+        add_files(FLAGS.dir, FLAGS.file, FLAGS.v)
 
 
 if __name__ == "__main__":
@@ -95,13 +106,20 @@ if __name__ == "__main__":
 
     create = subparsers.add_parser(ACTION.CREATE, help="Create new dataset from *.npz files.")
     create.add_argument("-c", "--compress", action="store_true", help="Compress TFRecords")
+    create.add_argument("-v", action="store_true", help="Verbose mode!")
     create.add_argument("--events_frac", metavar="val", type=float, default=1, help="Fraction (0-1) of all events in each file which will be saved in TFRecords.")
     create.add_argument("--train_frac", metavar="val", type=float, default=0.7, help="Fraction (0-1) of saved events from each file which will be saved in train dataset.")
     create.add_argument("--valid_frac", metavar="val", type=float, default=0.15, help="Fraction (0-1) of saved events from each file which will be saved in validation dataset.")
     create.add_argument("name", help="Dataset name")
     create.add_argument("path", help="Destination path")
     create.add_argument("file", nargs="+", help="*.npz files which should be taken to dataset")
-    
+
+    add = subparsers.add_parser(ACTION.ADD, help="Add examples from *.npz files into existing dataset.")
+    add.add_argument("-v", action="store_true", help="Verbose mode!")
+    add.add_argument("dir", help="Dataset object directory")
+    add.add_argument("file", nargs="+", help="*.npz files which will be added into dataset")
+
+
     r2n = subparsers.add_parser(ACTION.ROOT2NUMPY, help="Convert ROOT datasets to Numpy arrays. ROOT environment requred!")
     r2n.add_argument("-v", "--verbose", action="store_true")
     r2n.add_argument("dest", help="Destination directory")
