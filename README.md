@@ -14,6 +14,7 @@ Command line tools for [nn4omtf](https://github.com/jlysiak/fuw-nn4omtf) package
 
 Just run `install` script.  
 It creates `~/.nn4omtf_cli` directory and exports its path into bash env.
+Install required packages on your own - wherever you want.
 
 ## Description
 
@@ -23,7 +24,31 @@ Here is only short brief. For more info, please, refer to script files.
   * shows network model summary
   * creates new model based on provided python code
 
-      Python code should contain no-arg method `create_nn()` which returns 3-touple:
+* `omtfdatasettool`
+  * shows OMTFDataset summary
+  * creates new dataset from existing `*.npz` files
+  * adds new examples from `*.npz` files into existing dataset
+  * converts ROOT dictionary dataset files into `*.npz` files
+    * it's assumed that ROOT file has specific format and it was produced by OMTF simulator
+
+* `omtfrunner`
+  * model training
+  * comparing different models
+  * gethering statistics
+
+## Creating models
+
+You can create own models by providing builder function as `OMTFNN` constructor argument.
+Using `omtfnntool` builder should be in `*.py` file. 
+This code should contain no-arg method `create_nn()` which returns 4-touple with:
+
+- input tensor (placeholder), complatible with declared input type
+- output tensor, compatible with declared number of classes (#bins + 1)
+- pt classes bins edges
+- input type constant
+
+This is sample code which builds 3-layer network.
+
 ```python
 from nn4omtf import utils
 from nn4omtf.dataset.const import HITS_TYPE
@@ -59,14 +84,3 @@ def create_nn():
     return x, y, arr, HITS_TYPE.REDUCED
 
 ```
-
-* `omtfdatasettool`
-  * shows OMTFDataset summary
-  * creates new dataset from existing `*.npz` files
-  * adds new examples from `*.npz` files into existing dataset
-  * converts ROOT dictionary dataset files into `*.npz` files
-    * it's assumed that ROOT file has specific format and it was produced by OMTF simulator
-
-* `omtftraintool`
-  * model training from command line
-  * work in progress

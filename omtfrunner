@@ -1,0 +1,92 @@
+#!/usr/bin/env python3.6
+# -*- coding: utf-8 -*- 
+
+import sys
+import platform
+import argparse
+
+from nn4omtf.network import OMTFNN, OMTFNNStorage, OMTFRunner
+from nn4omtf.dataset import OMTFDataset
+
+desc="""
+Command line tools for networks training.
+"""
+
+VERBOSE = False
+
+class ACTION:
+    TRAIN = "train"
+    TEST = "test"
+
+
+def vp(s):
+    global VERBOSE
+    if VERBOSE:
+        print(s)
+
+
+def get_matching_nets(target, regexp):
+    nets = []
+    if OMTFNN.is_valid_object(target):
+        net = OMTFNN.load(target)
+        if net.name_matches(regexp):
+            nets.append(net)
+    elif OMTFNNStorage.is_valid_object(target):
+        store = OMTFNNStorage.load(target)
+        nets = store.get_by_name(regexp)
+    s = "".join([(n.name + ",") for n in nets])
+    vp("Loaded networks matching " + regexp + ": " + s[:-1])
+    return nets
+
+
+def run(action, dataset_name, target_list, **kw):
+    vp("Loading dataset from: %s" % dataset_name)
+    dataset = OMTFDataset.load(dataset_name)
+    for target in target_list:
+        vp("Getting models from: %s" % target)
+        nets = get_matching_nets(target, kw['filter'])
+        for net in nets:
+            runner = OMTFRunner(dataset, net)
+            if action == ACTION.TEST:
+                runner.test(**kw)
+            elif action == ACTION.TRAIN:
+                runner.train(**kw)
+
+
+def take_action(action, **kw):
+    dataset_name = kw['dataset']
+    target_list = kw['target']
+    del kw['target']
+    del kw['dataset']
+    run(action, dataset_name, target_list, **kw)
+    
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=desc)
+    subparsers = parser.add_subparsers(title="Actions", dest="action")
+
+    train = subparsers.add_parser(ACTION.TRAIN, help="Run model training sessions")
+    train.add_argument("-v", "--verbose", action="store_true", help="Get more info!")
+    train.add_argument("--sess_suffix", metavar="suff", default="", help="Suffix appended to default session name")
+    train.add_argument("--logs", metavar="path", help="Location of training summaries for TensorBoard")
+    train.add_argument("--batch_size", type=int, default=1000, metavar="size", help="Size of batch used")
+    train.add_argument("--reps", type=int, default=1, metavar="N", help="Number of training repetitions for each model")
+    train.add_argument("--steps", type=int, default=-1, metavar="K", help="Number of training steps. Default (K=-1) setup is untill end of dataset")
+    train.add_argument("--filter", default=".*", metavar="regexp", help="Regexp used for matching model names")
+    train.add_argument("dataset", help="Dataset location")
+    train.add_argument("target", nargs="+", help="List of target to train")
+
+    test = subparsers.add_parser(ACTION.TEST, help="Compare models with test dataset")
+    test.add_argument("-v", "--verbose", help="Get more info!")
+    test.add_argument("dataset", help="Dataset location")
+    test.add_argument("target", help="List of targets to compare")
+    
+    FLAGS, unparsed = parser.parse_known_args()
+    
+    if FLAGS.action is None:
+        parser.print_help()
+    else:
+        VERBOSE = FLAGS.verbose
+        action = FLAGS.action
+        del FLAGS.action
+        take_action(action, **vars(FLAGS))
