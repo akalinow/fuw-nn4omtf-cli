@@ -24,10 +24,12 @@ class ACTION:
 
 
 def show_summary(path):
-    if OMTFNN.is_valid_path(path):
-        OMTFNN.show_summary(path)
-    elif OMTFNNStorage.is_valid_path(path):
-        OMTFNNStorage.show_summary(path)
+    if OMTFNN.is_valid_object(path):
+        net = OMTFNN.load(path)
+        print(net)
+    elif OMTFNNStorage.is_valid_object(path):
+        store = OMTFNNStorage.load(path)
+        print(store)
     else:
         print("Sorry! No OMTFNN nor OMTFNNStorage object in '%s'" % dir)
 
@@ -38,14 +40,37 @@ def create_network(name, path, builder_file):
 
 def create_storage(name, path):
     store = OMTFNNStorage(name, path)
+    store.save()
 
 
 def move(src, dest):
-    pass
+    if OMTFNN.is_valid_object(path):
+        parent = os.path.dirname(path)
+        if OMTFNNStorage.is_valid_object(parent):
+            # delete nn
+            pass
+        else:
+            net = OMTFNN.load(path)
+            net.move(dest)
+
+    elif OMTFNNStorage.is_valid_object(path):
+        shutil.move(path, dest)
+    else:
+        print("Sorry! No OMTFNN nor OMTFNNStorage object in '%s'" % dir)
 
 
 def delete(path):
-    pass
+    if OMTFNN.is_valid_object(path):
+        parent = os.path.dirname(path)
+        if OMTFNNStorage.is_valid_object(parent):
+            # delete nn
+            pass
+        else:
+            shutil.rmtree(path)
+    elif OMTFNNStorage.is_valid_object(path):
+        shutil.rmtree(path)
+    else:
+        print("Sorry! No OMTFNN nor OMTFNNStorage object in '%s'" % dir)
 
 
 def take_action(action, FLAGS):

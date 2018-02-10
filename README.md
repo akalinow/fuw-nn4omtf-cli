@@ -26,13 +26,15 @@ Here is only short brief. For more info, please, refer to script files.
       Python code should contain no-arg method `create_nn()` which returns 3-touple:
 ```python
 from nn4omtf import utils
+from nn4omtf.dataset.const import HITS_TYPE
 
 def create_nn():
     """Create NN which try to classify pt into categories described by arr."""
     arr = [10, 20, 30, 40]
     FL = 10
     SL = 10
-    x = tf.placeholder(tf.float32, [None, 36])
+    x = tf.placeholder(tf.float32, [None, 18, 2])
+    x_in = tf.reshape(x, [-1, 36])
     with tf.name_scope("fc1"):
         # First layer, fully-connected
         W_fc1 = utils.weight_variable([36, FL])
@@ -54,13 +56,17 @@ def create_nn():
         y = tf.matmul(h_fc2, W_fc3) + b_fc3
         utils.add_summary(W_fc2) # Add full summary
     
-    return x, y, arr
+    return x, y, arr, HITS_TYPE.REDUCED
 
 ```
 
 * `omtfdatasettool`
   * shows OMTFDataset summary
   * creates new dataset from existing `*.npz` files
+  * adds new examples from `*.npz` files into existing dataset
   * converts ROOT dictionary dataset files into `*.npz` files
     * it's assumed that ROOT file has specific format and it was produced by OMTF simulator
 
+* `omtftraintool`
+  * model training from command line
+  * work in progress
