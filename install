@@ -14,7 +14,7 @@ cd ~
 mkdir -p $dir
 cd $dir
 echo "Copying tool files:"
-cp -v $old/*tool .
+cp -v $old/omtf* .
 exp='PATH=$PATH:'${PWD}
 if [ -z $(cat ~/.bashrc | grep "${PWD}") ]; then
   echo "Exporting PATH: $PWD$"

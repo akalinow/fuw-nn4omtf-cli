@@ -35,7 +35,12 @@ def show_summary(path):
 
 
 def create_network(name, path, builder_file):
-    net = OMTFNN.create_with_builder_file(name=name, path=path, builder_file=builder_file)
+    if OMTFNNStorage.is_valid_object(path):
+        store = OMTFNNStorage.load(path)
+        store.add_new_network_with_builder_file(name, builder_file)
+        store.save()
+    else:
+        OMTFNN.create_with_builder_file(name=name, path=path, builder_file=builder_file)
 
 
 def create_storage(name, path):
