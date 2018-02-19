@@ -42,15 +42,17 @@ def get_matching_nets(target, regexp):
 def run(action, dataset_name, target_list, **kw):
     vp("Loading dataset from: %s" % dataset_name)
     dataset = OMTFDataset.load(dataset_name)
+    models = []
     for target in target_list:
         vp("Getting models from: %s" % target)
         nets = get_matching_nets(target, kw['filter'])
-        for net in nets:
-            runner = OMTFRunner(dataset, net)
-            if action == ACTION.TEST:
-                runner.test(**kw)
-            elif action == ACTION.TRAIN:
-                runner.train(**kw)
+        models += nets
+    if action == ACTION.TEST:
+        res = OMTFRunner.test_many_models(dataset, models, **kw)
+    else:
+        for model in models:
+            runner = OMTFRunner(dataset, model, **kw)
+            runner.train()
 
 
 def take_action(action, **kw):
@@ -63,42 +65,31 @@ def take_action(action, **kw):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=desc)
-    subparsers = parser.add_subparsers(title="Actions", dest="action")
-
-    train = subparsers.add_parser(ACTION.TRAIN, 
-        help="Run model training sessions")
-    train.add_argument("-v", "--verbose", action="store_true", 
+    parser.add_argument("-v", "--verbose", action="store_true", 
         help="Get more info!")
-    train.add_argument("--sess_prefix", metavar="suff", default="",
+    parser.add_argument("--sess_prefix", metavar="suff", default="",
         help="Prefix appended to default session name")
-    train.add_argument("--logs", metavar="path", 
+    parser.add_argument("--logs", metavar="path", 
         help="Location of training summaries for TensorBoard")
-    train.add_argument("--batch_size", type=int, default=1000, 
+    parser.add_argument("--batch_size", type=int, default=1000, 
         metavar="size", help="Size of batch used")
-    train.add_argument("--reps", type=int, default=1, metavar="N", 
+    parser.add_argument("--reps", type=int, default=1, metavar="N", 
         help="Number of training repetitions for each model")
-    train.add_argument("--steps", type=int, default=-1, metavar="K", 
+    parser.add_argument("--steps", type=int, default=-1, metavar="K", 
         help=("Number of training steps."
               + "Default (K=-1) setup is untill end of dataset"))
-    train.add_argument("--filter", default=".*", metavar="regexp", 
+    parser.add_argument("--filter", default=".*", metavar="regexp", 
         help="Regexp used for matching model names")
-    train.add_argument("--learning_rate", type=float, default=1e-3, 
+    parser.add_argument("--learning_rate", type=float, default=1e-3, 
         help="Learning rate parameter", metavar="rate")
-    train.add_argument("dataset", help="Dataset location")
-    train.add_argument("target", nargs="+", help="List of target to train")
+    parser.add_argument("--test", action="store_true",
+            help="Test all models instead of training")
+    parser.add_argument("dataset", help="Dataset location")
+    parser.add_argument("target", nargs="+", help="List of target to train or test")
 
-    test = subparsers.add_parser(ACTION.TEST, 
-        help="Compare models with test dataset")
-    test.add_argument("-v", "--verbose", help="Get more info!")
-    test.add_argument("dataset", help="Dataset location")
-    test.add_argument("target", help="List of targets to compare")
-    
     FLAGS, unparsed = parser.parse_known_args()
     
-    if FLAGS.action is None:
-        parser.print_help()
-    else:
-        VERBOSE = FLAGS.verbose
-        action = FLAGS.action
-        del FLAGS.action
-        take_action(action, **vars(FLAGS))
+    VERBOSE = FLAGS.verbose
+    action = ACTION.TEST if FLAGS.test else ACTION.TRAIN
+    del FLAGS.test
+    take_action(action, **vars(FLAGS))

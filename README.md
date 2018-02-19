@@ -91,5 +91,6 @@ def create_nn():
     - learning rate param
     - accuracy ival param
     - accuracy dataset size param
-    - testing and comparing models
+    - testing and comparing models - DONE
+    - generate nice output from test results -> csv for pandas??
 
