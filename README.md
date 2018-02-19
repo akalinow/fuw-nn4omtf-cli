@@ -79,8 +79,17 @@ def create_nn():
         W_fc3 = utils.weight_variable([SL, 5])
         b_fc3 = utils.bias_variable([5])
         y = tf.matmul(h_fc2, W_fc3) + b_fc3
-        utils.add_summary(W_fc2) # Add full summary
+        utils.add_summary(W_fc3) # Add full summary
     
     return x, y, arr, HITS_TYPE.REDUCED
 
 ```
+
+## TODO
+
+- `omtfrunner`
+    - learning rate param
+    - accuracy ival param
+    - accuracy dataset size param
+    - testing and comparing models
+
