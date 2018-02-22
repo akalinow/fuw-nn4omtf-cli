@@ -112,7 +112,7 @@ if __name__ == "__main__":
     create.add_argument("--valid_frac", metavar="val", type=float, default=0.15, help="Fraction (0-1) of saved events from each file which will be saved in validation dataset.")
     create.add_argument("name", help="Dataset name")
     create.add_argument("path", help="Destination path")
-    create.add_argument("file", nargs="+", help="*.npz files which should be taken to dataset")
+    create.add_argument("file", nargs="*", help="*.npz files which should be taken to dataset")
 
     add = subparsers.add_parser(ACTION.ADD, help="Add examples from *.npz files into existing dataset.")
     add.add_argument("-v", action="store_true", help="Verbose mode!")
