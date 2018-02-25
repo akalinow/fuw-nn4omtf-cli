@@ -94,3 +94,9 @@ def create_nn():
     - testing and comparing models - DONE
     - generate nice output from test results -> csv for pandas??
 
+- add benchmarks:
+  - input pipe parameters optimization:
+    - batchsize - only reads
+    - parallel calls
+  - model computation timming
+    - batchsize optimization
