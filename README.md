@@ -6,7 +6,7 @@ Command line tools for [nn4omtf](https://github.com/jlysiak/fuw-nn4omtf) package
 
 * [nn4omtf](https://github.com/jlysiak/fuw-nn4omtf)
 * tensorflow >= 1.4
-* python 3.6
+* python >= 3.5
 
 * ROOT, root_numpy if converting ROOT dataset to numpy
 
