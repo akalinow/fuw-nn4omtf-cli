@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*- 
 
 import sys
+import os
 import platform
 import argparse
 
@@ -17,6 +18,7 @@ deleting, moving.
 
 class ACTION:
     SHOW = "show"
+    STATS = "stats"
     NETWORK = "network"
     STORAGE = "storage"
     MOVE = "move"
@@ -83,6 +85,50 @@ def delete(path):
         print("Sorry! No OMTFNN nor OMTFNNStorage object in '%s'" % dir)
 
 
+def stats_list_matched(stats):
+    print("Listing matched files:")
+    for name, _, c in stats:
+        print("name: %s, stat files: %d" %(name, c))
+
+def stats_show_matched(net, stats):
+    print("Showing matched statistics:")
+    for name, _, c in stats:
+        objs = net.get_statistics_objs(name)
+        for idx, obj in objs:
+            print("=============== [%d]" % idx)
+            print(obj)
+
+def stats_act_curve(net, stats, pt_tresh, save_path):
+    for name, _, c in stats:
+        objs = net.get_statistics_objs(name)
+        for idx, obj in [objs[-1]]:
+            obj.act_curve(pt_tresh, save_path)
+
+
+def statistics(netname, regexp):
+    print(FLAGS.__dict__)
+    if not OMTFNN.is_valid_object(netname):
+        print("%s in not valid OMTFNN object!" % netname)
+        exit(1)
+    net = OMTFNN.load(netname)
+    stats = net.match_statistics(regexp)
+
+    if FLAGS.show:
+        stats_show_matched(net, stats)
+
+    elif FLAGS.activation_curve is not None:
+        show_list = False
+        path = None
+        if FLAGS.save is not None:
+            path = FLAGS.save
+            if not os.path.exists(path):
+                print("`%s` doesn't exist!" % path)
+                exit(1)
+        stats_act_curve(net, stats, FLAGS.activation_curve, path)
+    else:
+        stats_list_matched(stats)
+
+
 def take_action(action, FLAGS):
     if action == ACTION.SHOW:
         show_summary(FLAGS.dirs)
@@ -94,7 +140,8 @@ def take_action(action, FLAGS):
         move(FLAGS.src, FLAGS.dest)
     elif action == ACTION.DELETE:
         delete(FLAGS.path)
-
+    elif action == ACTION.STATS:
+        statistics(FLAGS.name, FLAGS.regexp)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=desc)
@@ -102,6 +149,18 @@ if __name__ == "__main__":
 
     show = subparsers.add_parser(ACTION.SHOW, help="Look up for network or storage and show summary.")
     show.add_argument("dirs", nargs="*", default=[], help="Network/Storage directory")
+
+    stats = subparsers.add_parser(ACTION.STATS, 
+            help="Network statistics tool")
+    stats.add_argument("name", help="Network name")
+    stats.add_argument("regexp", nargs="?", default=".*", 
+            help="Python-like regexp for statistics name")
+    stats.add_argument("-s", "--show", action="store_true", 
+            help="Show specified statistics summaries")
+    stats.add_argument("-ac", "--activation_curve", metavar="pt-tresh", 
+            type=float, help="Generate activation curves")
+    stats.add_argument("--save", metavar="path",
+            help="Directory to save generated objects.")
 
     network = subparsers.add_parser(ACTION.NETWORK, help="Create new network.")
     network.add_argument("name", help="Network name")
