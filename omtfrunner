@@ -69,19 +69,19 @@ if __name__ == "__main__":
         help="Get more info!")
     parser.add_argument("--sess_prefix", metavar="suff", default="",
         help="Prefix appended to default session name")
-    parser.add_argument("--logs", metavar="path", 
+    parser.add_argument("--logdir", metavar="path", 
         help="Location of training summaries for TensorBoard")
     parser.add_argument("--batch_size", type=int, default=1000, 
         metavar="size", help="Size of batch used")
-    parser.add_argument("--reps", type=int, default=1, metavar="N", 
-        help="Number of training repetitions for each model")
+    parser.add_argument("--epochs", type=int, default=1, metavar="N", 
+        help="Number of epochs for each model")
     parser.add_argument("--steps", type=int, default=-1, metavar="K", 
         help=("Number of training steps."
               + "Default (K=-1) setup is untill end of dataset"))
     parser.add_argument("--filter", default=".*", metavar="regexp", 
         help="Regexp used for matching model names")
     parser.add_argument("--learning_rate", type=float, default=1e-3, 
-        help="Learning rate parameter", metavar="rate")
+        help="Learning rate parameter", metavar="lr")
     parser.add_argument("--test", action="store_true",
             help="Test all models instead of training")
     parser.add_argument("dataset", help="Dataset location")

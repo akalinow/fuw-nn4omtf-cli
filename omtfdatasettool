@@ -105,7 +105,7 @@ if __name__ == "__main__":
     show.add_argument("dir", nargs="?", default=".", help="Dataset object directory")
 
     create = subparsers.add_parser(ACTION.CREATE, help="Create new dataset from *.npz files.")
-    create.add_argument("-c", "--compress", action="store_true", help="Compress TFRecords")
+    create.add_argument("-c", "--compress", default=True, action="store_true", help="Compress TFRecords (default True... is it useless?????")
     create.add_argument("-v", action="store_true", help="Verbose mode!")
     create.add_argument("--events_frac", metavar="val", type=float, default=1, help="Fraction (0-1) of all events in each file which will be saved in TFRecords.")
     create.add_argument("--train_frac", metavar="val", type=float, default=0.7, help="Fraction (0-1) of saved events from each file which will be saved in train dataset.")
