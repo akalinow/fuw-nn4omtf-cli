@@ -90,19 +90,24 @@ def stats_list_matched(stats):
     for name, _, c in stats:
         print("name: %s, stat files: %d" %(name, c))
 
-def stats_show_matched(net, stats):
+def stats_show_matched(net, stats, i):
     print("Showing matched statistics:")
     for name, _, c in stats:
         objs = net.get_statistics_objs(name)
         for idx, obj in objs:
-            print("=============== [%d]" % idx)
-            print(obj)
+            if i is None or i == idx:
+                print("=============== [%d]" % idx)
+                print(obj)
 
-def stats_act_curve(net, stats, pt_tresh, save_path):
+def stats_act_curve(net, stats, pt_tresh, save_path, i):
+    if i is None:
+        print("Please specify statistics file index!")
+        exit(1)
     for name, _, c in stats:
         objs = net.get_statistics_objs(name)
-        for idx, obj in [objs[-1]]:
-            obj.act_curve(pt_tresh, save_path)
+        for idx, obj in objs:
+            if i is None or i == idx:
+                obj.act_curve(pt_tresh, save_path)
 
 
 def statistics(netname, regexp):
@@ -112,9 +117,10 @@ def statistics(netname, regexp):
         exit(1)
     net = OMTFNN.load(netname)
     stats = net.match_statistics(regexp)
+    i = FLAGS.i
 
     if FLAGS.show:
-        stats_show_matched(net, stats)
+        stats_show_matched(net, stats, i)
 
     elif FLAGS.activation_curve is not None:
         show_list = False
@@ -124,7 +130,7 @@ def statistics(netname, regexp):
             if not os.path.exists(path):
                 print("`%s` doesn't exist!" % path)
                 exit(1)
-        stats_act_curve(net, stats, FLAGS.activation_curve, path)
+        stats_act_curve(net, stats, FLAGS.activation_curve, path, i)
     else:
         stats_list_matched(stats)
 
@@ -155,6 +161,7 @@ if __name__ == "__main__":
     stats.add_argument("name", help="Network name")
     stats.add_argument("regexp", nargs="?", default=".*", 
             help="Python-like regexp for statistics name")
+    stats.add_argument("-i", help="Stats file index", type=int)
     stats.add_argument("-s", "--show", action="store_true", 
             help="Show specified statistics summaries")
     stats.add_argument("-ac", "--activation_curve", metavar="pt-tresh", 
