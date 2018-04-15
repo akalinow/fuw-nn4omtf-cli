@@ -85,15 +85,18 @@ if __name__ == "__main__":
     train.add_argument("-s", "--steps", type=int, default=-1, metavar="K", 
         help=("Number of training steps. Default (K = -1) setup means \
                 read untill end of dataset"))
-    train.add_argument("-sh", "--shuffle", action="store_true", help="Shuffle batch")
+    train.add_argument("-u", "--shuffle", action="store_true", help="Shuffle batch")
     train.add_argument("-f", "--filter", default=".*", metavar="REGEXP", 
         help="Regexp used for matching model names")
     train.add_argument("-r", "--learning_rate", type=float, default=1e-3, 
             help="Learning rate parameter (defatult: 0.001)", metavar="LR")
-    train.add_argument("-sv", "--shiftval", default=600, type=int, 
+    train.add_argument("-i", "--shiftval", default=600, type=int, 
             metavar="VAL", help="Shift signal value in HITS array")
-    train.add_argument("-nv", "--nullval", default=0, type=int, metavar="VAL",
+    train.add_argument("-n", "--nullval", default=0, type=int, metavar="VAL",
             help="Remap value indicating no signal in HITS array")
+    train.add_argument("-lim", "--limit_valid_examples", type=int, metavar="N",
+            help="Limit number of examples in `valid` phase. This can\
+                    shorten training if `valid` dataset is big")
     train.add_argument("dataset", help="Dataset location")
     train.add_argument("target", nargs="+", help="List of target to train")
 
@@ -108,6 +111,8 @@ if __name__ == "__main__":
             help="Logs and statistics directory. (default: `.`)")
     test.add_argument("-f", "--full_stat", action="store_true",
             help="Save full statistics from tests.")
+    test.add_argument("-lim", "--limit_test_examples", type=int, metavar="N",
+            help="Limit number of examples in `test` phase.")
     FLAGS, unparsed = parser.parse_known_args()
     if FLAGS.action is None:
         parser.print_help()
