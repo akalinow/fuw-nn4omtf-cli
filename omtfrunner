@@ -96,6 +96,8 @@ if __name__ == "__main__":
             help="Remap value indicating no signal in HITS array")
     train.add_argument("-a", "--acc_ival", default=1000, type=int, metavar="N",
             help="Evaluate accuracy every N steps of training.")
+    train.add_argument("--debug", action="store_true",
+            help="Enter debuger mode")
     train.add_argument("-lim", "--limit_valid_examples", type=int, metavar="N",
             help="Limit number of examples in `valid` phase. This can\
                     shorten training if `valid` dataset is big")
