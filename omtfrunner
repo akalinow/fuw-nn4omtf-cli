@@ -76,8 +76,10 @@ if __name__ == "__main__":
             help="Increase verbosity level")
     train.add_argument("-p", "--sess_prefix", metavar="PREF", default="",
         help="Prefix appended to default session name")
-    train.add_argument("-l", "--logdir", metavar="DIR", 
-        help="Location of training summaries for TensorBoard")
+    train.add_argument("-l", "--log", metavar="OPT", default="none", 
+            choices=['none', 'txt', 'tb', 'both'], help="Logging options")
+    train.add_argument("-o", "--logdir", metavar="DIR", 
+        help="Location of logs.")
     train.add_argument("-b", "--batch_size", type=int, default=1000, 
             metavar="SIZE", help="Size of batch used for training (def: 1000)")
     train.add_argument("-e", "--epochs", type=int, default=1, metavar="N", 
