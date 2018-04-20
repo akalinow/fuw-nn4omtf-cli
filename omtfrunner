@@ -115,8 +115,8 @@ if __name__ == "__main__":
         help="Prefix appended to default session name")
     test.add_argument("-l", "--logdir", metavar="DIR", default=".", 
             help="Logs and statistics directory. (default: `.`)")
-    test.add_argument("-s", "--full_stat", action="store_true",
-            help="Save full statistics from tests.")
+    test.add_argument("--prob_dist", action="store_true", default=False,
+            help="Prepare probability distributions of outputs.")
     test.add_argument("-lim", "--limit_test_examples", type=int, metavar="N",
             help="Limit number of examples in `test` phase.")
     test.add_argument("-d", "--detect_no_signal", action="store_true",
