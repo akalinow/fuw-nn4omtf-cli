@@ -6,30 +6,25 @@ import os
 import platform
 import argparse
 
-from nn4omtf.network import OMTFNN, OMTFNNStorage
+from nn4omtf.utils import OMTFPlotter
 
 
 desc="""
 Command line tools for ploting data from nn4omtf framework. 
 """
 
-class ACTION:
-    SHOW = "show"
-
-
-def take_action(action, FLAGS):
-    if action == ACTION.SHOW:
-        print(FLAGS)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=desc)
-    subparsers = parser.add_subparsers(title="Actions", description="Actions to perform", dest="action")
+    parser.add_argument("files", nargs="+", help="Plot data from `*.npz` files")
+    parser.add_argument("-o", "--output", metavar="PATH", default=".",
+            help="Output directory (default: '.')")
+    parser.add_argument("-p", "--prefix", metavar="PREF", default="",
+            help="Prefix for generated files.")
 
-    show = subparsers.add_parser(ACTION.SHOW, help="Look up for network or storage and show summary.")
-    show.add_argument("dirs", nargs="*", default=[], help="Network/Storage directory")
-    
     FLAGS, unparsed = parser.parse_known_args()
-    if FLAGS.action is None:
-        parser.print_help()
-    else:
-        take_action(FLAGS.action, FLAGS)
+
+    for f in FLAGS.files:
+        print("Plotting: %s" % f)
+        plt = OMTFPlotter.from_npz(f)
+        plt.plot(FLAGS.output, prefix=FLAGS.prefix)
