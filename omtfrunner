@@ -121,6 +121,8 @@ if __name__ == "__main__":
             help="Prepare probability distributions of outputs.")
     test.add_argument("--activation_curves", action="store_true", default=False,
             help="Collect statistics and generate activation curves.")
+    test.add_argument("--save_answers", action="store_true", default=False,
+            help="Save all collected answers in `*.npz` file.")
     test.add_argument("--omtf_comparsion", action="store_true",
             help="Collect NN and OMTF statistics and generate full comparsion.")
     test.add_argument("-lim", "--limit_test_examples", type=int, metavar="N",
