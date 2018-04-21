@@ -119,6 +119,10 @@ if __name__ == "__main__":
             help="Logs and statistics directory. (default: `.`)")
     test.add_argument("--prob_dist", action="store_true", default=False,
             help="Prepare probability distributions of outputs.")
+    test.add_argument("--activation_curves", action="store_true", default=False,
+            help="Collect statistics and generate activation curves.")
+    test.add_argument("--omtf_comparsion", action="store_true",
+            help="Collect NN and OMTF statistics and generate full comparsion.")
     test.add_argument("-lim", "--limit_test_examples", type=int, metavar="N",
             help="Limit number of examples in `test` phase.")
     test.add_argument("-d", "--detect_no_signal", action="store_true",
