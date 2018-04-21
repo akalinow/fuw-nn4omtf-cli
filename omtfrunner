@@ -100,6 +100,8 @@ if __name__ == "__main__":
             help="Evaluate accuracy every N steps of training.")
     train.add_argument("--debug", action="store_true",
             help="Enter debuger mode")
+    train.add_argument("--plot_online", action="store_true",
+            help="Plot training phase results online. `--log txt` must be set.")
     train.add_argument("-lim", "--limit_valid_examples", type=int, metavar="N",
             help="Limit number of examples in `valid` phase. This can\
                     shorten training if `valid` dataset is big")
