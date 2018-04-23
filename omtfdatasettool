@@ -9,6 +9,7 @@ import time
 
 import nn4omtf
 from nn4omtf.dataset import OMTFDataset
+from nn4omtf.const import FILTER_DEFAULT
 
 desc="""
 Command line tools for nn4omtf.
@@ -105,23 +106,32 @@ if __name__ == "__main__":
     show.add_argument("dir", nargs="?", default=".", help="Dataset object directory")
 
     create = subparsers.add_parser(ACTION.CREATE, help="Create new dataset from *.npz files.")
+
     create.add_argument("-nc", "--no_compress", default=False, 
             action="store_true", help="Do not compress TFRecords")
-    create.add_argument("-f", "--filter_no_signal", default=5400, type=float, 
-            metavar="THRESHOLD", help="Filter events where no signal was \
-                    registered - MEAN(HITS) >= THRESHOLD")
+
+    create.add_argument("-f", "--filter_no_signal", default=FILTER_DEFAULT,
+            type=float, metavar="THRESHOLD", help="Filter events where no \
+                    signal was registered: MEAN(HITS) > THRESHOLD")
+
     create.add_argument("-v", action="store_true", help="Verbose mode!")
+
     create.add_argument("--events_frac", metavar="val", type=float, default=1, 
             help="Fraction (0-1) of all events in each \
                     file which will be saved in TFRecords.")
+
     create.add_argument("--train_frac", metavar="val", type=float, 
             default=0.9, help="Fraction (0-1) of saved events from each \
                     file which will be saved in train dataset.")
+
     create.add_argument("--valid_frac", metavar="val", type=float, 
             default=0.01, help="Fraction (0-1) of saved events from each \
             file which will be saved in validation dataset.")
+
     create.add_argument("name", help="Dataset name")
+
     create.add_argument("path", help="Destination path")
+
     create.add_argument("file", nargs="*", help="*.npz files which should be \
             taken to dataset")
 
