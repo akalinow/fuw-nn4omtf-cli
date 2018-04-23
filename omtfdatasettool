@@ -107,8 +107,9 @@ if __name__ == "__main__":
     create = subparsers.add_parser(ACTION.CREATE, help="Create new dataset from *.npz files.")
     create.add_argument("-nc", "--no_compress", default=False, 
             action="store_true", help="Do not compress TFRecords")
-    create.add_argument("-f", "--filter_no_signal", default=False, 
-            action="store_true", help="Filter events where no signal was registered")
+    create.add_argument("-f", "--filter_no_signal", default=5400, type=float, 
+            metavar="THRESHOLD", help="Filter events where no signal was \
+                    registered - MEAN(HITS) >= THRESHOLD")
     create.add_argument("-v", action="store_true", help="Verbose mode!")
     create.add_argument("--events_frac", metavar="val", type=float, default=1, 
             help="Fraction (0-1) of all events in each \

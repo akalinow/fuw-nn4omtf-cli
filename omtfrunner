@@ -105,6 +105,10 @@ if __name__ == "__main__":
     train.add_argument("-lim", "--limit_valid_examples", type=int, metavar="N",
             help="Limit number of examples in `valid` phase. This can\
                     shorten training if `valid` dataset is big")
+    train.add_argument("-d", "--detect_no_signal", metavar="THRESHOLD",
+            help="Map `no signal` states onto special `NOT KNOWN` \
+                    if MEAN(HITS) >= TRESHOLD. Mapping is done before \
+                    transformation.", type=float)
     train.add_argument("dataset", help="Dataset location")
     train.add_argument("target", nargs="+", help="List of target to train")
 
@@ -129,9 +133,10 @@ if __name__ == "__main__":
             help="Collect NN and OMTF statistics and generate full comparsion.")
     test.add_argument("-lim", "--limit_test_examples", type=int, metavar="N",
             help="Limit number of examples in `test` phase.")
-    test.add_argument("-d", "--detect_no_signal", action="store_true",
+    test.add_argument("-d", "--detect_no_signal", metavar="THRESHOLD",
             help="Map `no signal` states onto special `NOT KNOWN` \
-                    state like in training phase.")
+                    if MEAN(HITS) >= TRESHOLD. Mapping is done before \
+                    transformation.", type=float)
     test.add_argument("-f", "--filter", default=".*", metavar="REGEXP", 
         help="Regexp used for matching model names")
     FLAGS, unparsed = parser.parse_known_args()
