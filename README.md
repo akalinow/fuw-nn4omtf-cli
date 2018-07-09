@@ -2,18 +2,20 @@
 
 Command line tools for [nn4omtf](https://github.com/jlysiak/fuw-nn4omtf) package.
 
+Simple frontend for nn4omtf CLI.
+CLI code is integrated with nn4omtf now. 
+
 ## Requirements
 
 * [nn4omtf](https://github.com/jlysiak/fuw-nn4omtf)
-* tensorflow >= 1.4
-* python >= 3.5
+  * python >= 3.5
+  * tensorflow >= 1.4
+  * `ROOT`, `root_numpy` if converting ROOT dataset to numpy
 
-* ROOT, root_numpy if converting ROOT dataset to numpy
 
 ## Install
 
-Just run `install` script.  
-It creates `~/.nn4omtf_cli` directory and exports its path into bash env.
-Install required packages on your own - wherever you want.
+run `install` script.  
+`~/.nn4omtf_cli` will be created and its path exported.
 
 

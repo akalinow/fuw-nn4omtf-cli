@@ -2,10 +2,9 @@
 #
 # Jacek Lysiak <jacek.lysiako.o.at.gmail.com>
 #
-# Easy installation script.
+# Installation script.
 # Copy tools into hidden dir @ your home.
 #
-#===================================
 
 old=$PWD
 
@@ -22,7 +21,7 @@ if [ -z $(cat ~/.bashrc | grep "${PWD}") ]; then
   echo $exp >> ~/.bashrc
   echo "export PATH" >> ~/.bashrc
 else
-  echo "$PWD path exported already!"
+  echo "$PWD path already exported!"
 fi
 
 echo "Done!"
